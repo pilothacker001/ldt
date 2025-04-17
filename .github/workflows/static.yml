@@ -1,43 +1,1733 @@
 
-name: Deploy static content to Pages
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lexical Decision Task© - Research Study©</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
 
-on:
-  # Runs on pushes targeting the default branch
-  push:
-    branches: ["main"]
+        :root {
+            --bg-main: #89b9e9;
+            --bg-header: #1a365d;
+            --bg-card: #c5d1e7;
+            --bg-secondary: #e9ecef;
+            --bg-input: #ffffff;
+            --bg-input-focus: #e3f2fd;
+            --text-dark: #2d3748;
+            --text-medium: #4a5568;
+            --text-light: #f8f9fa;
+            --accent: #4299e1;
+            --accent-hover: #2b6cb0;
+            --accent-light: #ebf8ff;
+            --success: #48bb78;
+            --warning: #ecc94b;
+            --error: #e53e3e;
+            --border-radius: 10px;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --transition-speed: 0.3s;
+        }
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', Arial, sans-serif;
+        }
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+        body {
+            background-color: var(--bg-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
+        header {
+            background-color: var(--bg-header);
+            color: var(--text-light);
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+            position: relative;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-jobs:
-  # Single deploy job since we're just deploying
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          # Upload entire repository
-          path: '.'
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+        .title-logo {
+            width: 40px;
+            height: 40px;
+            margin-right: 15px;
+        }
+
+        header h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 28px;
+            font-weight: 600;
+            margin: 0;
+            letter-spacing: 0.5px;
+        }
+
+        main {
+            flex: 1;
+            padding: 40px 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            width: 100%;
+            padding: 30px;
+            margin-bottom: 30px;
+            transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+        }
+
+        .researcher-info {
+            align-self: flex-end;
+            color: var(--text-medium);
+            font-size: 12px;
+            margin-bottom: 20px;
+            padding: 10px 15px;
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .instruction-container {
+            background-color: var(--bg-card);
+            border-radius: var(--border-radius);
+            width: 100%;
+            max-width: 800px;
+            height: 400px;
+            overflow-y: auto;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-left: 4px solid var(--accent);
+            scroll-behavior: smooth;
+        }
+
+        .instruction-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .instruction-container::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+        }
+
+        .instruction-container::-webkit-scrollbar-thumb {
+            background-color: var(--accent);
+            border-radius: 10px;
+        }
+
+        .instruction-text {
+            font-size: 16px;
+            color: var(--text-dark);
+            line-height: 1.8;
+        }
+
+        .instruction-text strong {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .start-text {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--accent);
+            margin: 30px 0;
+            text-align: center;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .experiment-container {
+            display: none;
+            width: 100%;
+            max-width: 900px;
+            text-align: center;
+        }
+
+        .stimulus-container {
+            background-color: var(--bg-card);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 40px 20px;
+            margin: 30px 0;
+        }
+
+        .stimulus {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--text-dark);
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.4s, opacity 0.4s;
+            letter-spacing: 1px;
+        }
+
+        .stimulus.fade-in {
+            animation: fadeIn 0.5s forwards;
+        }
+
+        .stimulus.fade-out {
+            animation: fadeOut 0.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-20px); }
+        }
+
+        .key-reminder {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-top: 40px;
+        }
+
+        .key {
+            text-align: center;
+            background-color: var(--bg-card);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 15px 25px;
+            transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+            width: 45%;
+            cursor: pointer;
+        }
+
+        .key:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            background-color: var(--accent-light);
+        }
+
+        .key-label {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 5px;
+        }
+
+        .key-meaning {
+            font-size: 14px;
+            color: var(--text-medium);
+        }
+
+        .progress-container {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            margin-top: 40px;
+            padding: 20px;
+            background-color: var(--bg-card);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 12px;
+            background-color: var(--bg-secondary);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-right: 15px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--accent);
+            width: 0%;
+            transition: width 0.5s ease-in-out;
+            border-radius: 10px;
+        }
+
+        .progress-label {
+            color: var(--text-medium);
+            font-weight: 500;
+            min-width: 70px;
+            text-align: right;
+        }
+
+        .results-container {
+            display: none;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .results-header {
+            background-color: var(--accent);
+            color: var(--text-light);
+            padding: 25px 30px;
+            text-align: center;
+            margin-bottom: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .results-header h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 26px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin: 0;
+        }
+
+        .results-content {
+            background-color: var(--bg-card);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .thank-you {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--accent);
+            text-align: center;
+            margin: 20px 0 30px;
+            animation: slideUp 1s forwards;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .results-text-container {
+            background-color: var(--accent-light);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin: 30px 0;
+        }
+
+        .results-text {
+            background-color: var(--bg-card);
+            color: var(--text-dark);
+            font-size: 16px;
+            padding: 25px;
+            line-height: 1.8;
+            max-height: 350px;
+            overflow-y: auto;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .results-text::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .results-text::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+        }
+
+        .results-text::-webkit-scrollbar-thumb {
+            background-color: var(--accent);
+            border-radius: 10px;
+        }
+
+        .results-text h3 {
+            color: var(--accent);
+            margin-bottom: 15px;
+        }
+
+        .results-text ul {
+            list-style-type: none;
+            padding-left: 5px;
+        }
+
+        .results-text li {
+            margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .results-text li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .btn {
+            background-color: var(--accent);
+            color: var(--text-light);
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .btn:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .input-group {
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--bg-secondary);
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            transition: all var(--transition-speed);
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.25);
+        }
+
+        .input-field.error {
+            border-color: var(--error);
+        }
+
+        .input-error {
+            color: var(--error);
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .input-error.visible {
+            display: block;
+            animation: fadeIn 0.3s forwards;
+        }
+
+        .participant-input-container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .participant-input-container h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            margin-bottom: 30px;
+            color: var(--accent);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .shake {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        .footer-label {
+            width: 100%;
+            max-width: 3000px;
+            background-color: var(--bg-header);
+            color: white;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin: 30px auto 0;
+        }
+        
+        .title-buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .title-button {
+            color: white;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .title-button:hover {
+            background-color: var(--accent-hover);
+        }
+        
+        .copyright {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #aaa;
+        }
+
+                /* Add these modal styles */
+                .modal-container {
+                    display: none;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.5);
+                    z-index: 2000;
+                    align-items: center;
+                    justify-content: center;
+                }
+        
+                .modal-container:target {
+                    display: flex;
+                }
+        
+                .modal {
+                    background: var(--bg-card);
+                    padding: 30px;
+                    border-radius: var(--border-radius);
+                    position: relative;
+                    max-width: 600px;
+                    width: 90%;
+                    animation: modalSlide 0.3s ease-out;
+                    box-shadow: var(--shadow);
+                }
+        
+                .modal-close {
+                    position: absolute;
+                    top: 15px;
+                    right: 15px;
+                    font-size: 24px;
+                    background: none;
+                    border: none;
+                    cursor: pointer;
+                    color: var(--text-medium);
+                    transition: color var(--transition-speed);
+                }
+        
+                .modal-close:hover {
+                    color: var(--accent);
+                }
+        
+                .modal-content h3 {
+                    color: var(--accent);
+                    margin-bottom: 15px;
+                    font-family: 'Montserrat', sans-serif;
+                }
+
+                .privacy-btn {
+                    background-color: #4a90e2;
+                    color: white;
+                    padding: 10px 15px;
+                    text-decoration: none;
+                    border-radius: 4px;
+                    font-weight: bold;
+                    display: inline-block;
+                }
+                .privacy-btn:hover {
+                    background-color: #357abd;
+                }
+        
+                @keyframes modalSlide {
+                    from { transform: translateY(-50px); opacity: 0; }
+                    to { transform: translateY(0); opacity: 1; }
+                }
+        
+        @media (max-width: 600px) {
+            .title-buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translateX(-2px); }
+            20%, 80% { transform: translateX(4px); }
+            30%, 50%, 70% { transform: translateX(-6px); }
+            40%, 60% { transform: translateX(6px); }
+        }
+
+        @media (max-width: 768px) {
+            main {
+                padding: 20px;
+            }
+
+            .key-reminder {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .key {
+                width: 80%;
+                margin-bottom: 15px;
+            }
+
+            .stimulus {
+                font-size: 32px;
+                height: 100px;
+            }
+        }
+
+        /* Additional animation classes */
+        .scale-in {
+            animation: scaleIn 0.5s forwards;
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .slide-in-right {
+            animation: slideInRight 0.5s forwards;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .slide-in-left {
+            animation: slideInLeft 0.5s forwards;
+        }
+
+        @keyframes slideInLeft {
+            from { transform: translateX(-50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Key press animation */
+        .key-pressed {
+            animation: keyPress 0.3s forwards;
+        }
+
+        @keyframes keyPress {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.95); background-color: var(--accent-light); }
+            100% { transform: scale(1); }
+        }
+
+        /* Loading animation */
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--accent);
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Checkmark animation */
+        .checkmark {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            stroke-width: 2;
+            stroke: #fff;
+            stroke-miterlimit: 10;
+            margin-right: 8px;
+            box-shadow: inset 0px 0px 0px #7ac142;
+            animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+        }
+
+        .checkmark__circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            stroke-width: 2;
+            stroke-miterlimit: 10;
+            stroke: #fff;
+            fill: none;
+            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+        }
+
+        .checkmark__check {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+        }
+
+        @keyframes stroke {
+            100% { stroke-dashoffset: 0; }
+        }
+
+        @keyframes scale {
+            0%, 100% { transform: none; }
+            50% { transform: scale3d(1.1, 1.1, 1); }
+        }
+
+        @keyframes fill {
+            100% { box-shadow: inset 0px 0px 0px 30px transparent; }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        .error-shake {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+            border-color: #f44336 !important;
+        }
+        
+        #participant-name:focus {
+            outline: none;
+            border-color: #2196F3;
+        }
+        
+        .error-box {
+            margin-bottom: 15px;
+        }
+
+        .test-finished {
+            cursor: default;
+            background-color: #f9f9f9;
+        }
+        
+        .test-finished #stimulus {
+            color: #999;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        .error-shake {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+            border-color: #f44336 !important;
+        }
+        
+        #participant-name:focus {
+            outline: none;
+            border-color: #2196F3;
+        }
+        
+        .error-box {
+            margin-bottom: 15px;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <svg class="title-logo" viewBox="0 0 512 512">
+            <rect x="60" y="40" width="390" height="70" fill="#4a5793" rx="15" />
+            <rect x="60" y="90" width="390" height="250" fill="#e6f0fa" rx="3" />
+            <rect x="80" y="110" width="20" height="20" fill="#a5c5d9" rx="5" />
+            <rect x="80" y="145" width="20" height="20" fill="#a5c5d9" rx="5" />
+            <rect x="80" y="180" width="20" height="20" fill="#a5c5d9" rx="5" />
+            <rect x="80" y="215" width="20" height="20" fill="#a5c5d9" rx="5" />
+            <rect x="80" y="250" width="20" height="20" fill="#a5c5d9" rx="5" />
+            <rect x="120" y="110" width="130" height="20" fill="#69d1a5" rx="5" />
+            <rect x="120" y="145" width="150" height="20" fill="#69d1a5" rx="5" />
+            <rect x="120" y="180" width="170" height="20" fill="#69d1a5" rx="5" />
+            <rect x="120" y="215" width="120" height="20" fill="#69d1a5" rx="5" />
+            <rect x="120" y="250" width="160" height="20" fill="#69d1a5" rx="5" />
+            <rect x="120" y="285" width="130" height="20" fill="#69d1a5" rx="5" />
+            <rect x="290" y="145" width="80" height="20" fill="#ffca3a" rx="5" />
+            <rect x="290" y="250" width="100" height="20" fill="#ffca3a" rx="5" />
+            <rect x="380" y="145" width="40" height="20" fill="#ff595e" rx="5" />
+            <circle cx="120" cy="380" r="90" fill="#ff595e" />
+            <path d="M85 380 L155 380 M120 345 L120 415" stroke="white" stroke-width="20" stroke-linecap="round" transform="rotate(45, 120, 380)" />
+            <circle cx="390" cy="380" r="90" fill="#69d1a5" />
+            <path d="M350 380 L430 350" stroke="white" stroke-width="20" stroke-linecap="round" />
+        </svg>
+        <h1>Lexical Decision Task Experiment©</h1>
+    </header>
+
+    <main>
+        <div id="participant-input-container" class="card participant-input-container scale-in">
+            <h2>Participant Information</h2>
+            <div class="input-group">
+                <label for="participant-full-name">Enter Participant Full Name (real one):</label>
+                <input type="text" id="participant-name" class="input-field" placeholder="Your full name, please">
+                <div id="name-error" class="input-error">Please enter a valid name</div>
+            </div>
+            <button id="submit-btn" class="btn" onclick="setParticipantInfo()" style="background-color: var(--accent); color: white; border: none; padding: 5px 10px; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                    <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                    <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                </svg>
+                Submit
+            </button>           
+        </div>
+
+        <div id="experiment-setup" class="hidden">
+            <div id="researcher-info" class="researcher-info slide-in-right"></div>
+
+            <div class="instruction-container card">
+                <div class="instruction-text">
+                    <p><strong>WELCOME TO THE LEXICAL DECISION TASK!</strong></p>
+                    <br>
+                    <p>You will be shown a series of words and non-words.</p>
+                    <br>
+                    <p>Your task is to decide whether each item is a real word or not:</p>
+                    <p>• Press <strong>RIGHT ARROW</strong> if you think it's a real word.</p>
+                    <p>• Press <strong>LEFT ARROW</strong> if you think it's not a real word.</p>
+                    <br>
+                    <p>Total trials: <span id="total-trials">0</span></p>
+                    <br>
+                    <p>Try to respond as quickly and accurately as possible.</p>
+                    <br><br>
+                    <p><strong>>>> PRESS SPACE TO BEGIN THE EXPERIMENT <<<</strong></p>
+                </div>
+            </div>
+
+
+            <div class="start-text">
+                <i class="fas fa-keyboard"></i> Press SPACE to begin
+            </div>
+        </div>
+
+        <div id="experiment-container" class="experiment-container">
+            <div class="stimulus-container">
+                <div class="stimulus" id="stimulus"></div>
+            </div>
+
+            <div class="key-reminder">
+                <div class="key" id="left-key">
+                    <div class="key-label"><i class="fas fa-arrow-left"></i> LEFT ARROW</div>
+                    <div class="key-meaning">Non-word</div>
+                </div>
+                <div class="key" id="right-key">
+                    <div class="key-label">RIGHT ARROW <i class="fas fa-arrow-right"></i></div>
+                    <div class="key-meaning">Real word</div>
+                </div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <div class="progress-label" id="progress-label">0 / 0</div>
+            </div>
+        </div>
+
+        <div id="results-container" class="results-container">
+            <div class="results-header">
+                <h2><i class="fas fa-chart-bar"></i> Experiment Complete!</h2>
+            </div>
+            <div class="results-content">
+                <div class="thank-you">Thank you for participating!</div>
+                
+                <div class="results-text-container">
+                    <div class="results-text" id="results-text">
+                        <div id="loading-results" class="loading-spinner"></div>
+                    </div>
+                </div>
+                
+                <div class="btn-container">
+                    <button class="btn" onclick="exitExperiment()">
+                        <i class="fas fa-sign-out-alt"></i> Exit Experiment
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer-label">
+        <div class="title-buttons">
+            <div class="modal-container" id="about-modal">
+                <div class="modal">
+                    <div class="modal-content">
+                        <h3>About This Study</h3>
+                        <p>This lexical decision task is part of a cognitive psychology research study investigating word recognition processes. The experiment measures reaction times and accuracy in distinguishing real words from non-words.</p>
+                        <button class="modal-close" onclick="window.location.hash='#'">×</button>
+                    </div>
+                </div>
+            </div>
+        
+
+            <div class="modal-container" id="privacy-modal">
+                <div class="modal">
+                    <div class="modal-content">
+                        <h3>🔒 Privacy Notice</h3>
+                        <p>This experiment anonymously collects response data (e.g., reaction times, accuracy) for research purposes only. No personal information (exept "Full Name") is required, and all data is securely stored in our local server.<br>
+                        <br>Your participation is voluntary, and you may quit at any time. By continuing, you agree to the use of your data in academic analysis.<br>
+                        <br>For questions, contact the research team.</p>
+                        <div class="button-container" style="text-align: center; margin-top: 20px;">
+                            <a href="full-privacy-Statement-for-Lexical-Decision-Task-Experiment.html" class="privacy-btn">Read Full Privacy Statement</a>
+                        </div>
+                        <button class="modal-close" onclick="window.location.hash='#'">×</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-container" id="terms-modal">
+                <div class="modal">
+                    <div class="modal-content">
+                        <h3>Terms of Service</h3>
+                        <p>By participating in this study, you agree to our terms:<br>
+                        -Data collected will be used only for academic research purpose</p>
+                        <button class="modal-close" onclick="window.location.hash='#'">×</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-container" id="contact-modal">
+                <div class="modal">
+                    <div class="modal-content">
+                        <h3>Contact Researchers</h3>
+                        <p>Principal Investigator:<br>
+                        Mrs.Denisa Andreea Arsene<br>
+                        Email: <a href="mailto:denisa-andreea.arsene@uit.ac.ma">denisa-andreea.arsene@uit.ac.ma</a><br>
+                        <br>
+                        Ibn Tofail University</p>
+                        <button class="modal-close" onclick="window.location.hash='#'">×</button>
+                    </div>
+                </div>
+            </div>
+        
+            <footer class="footer-label">
+                <div class="title-buttons">
+                    <a href="#about-modal" class="title-button">About Us</a>
+                    <a href="#privacy-modal" class="title-button">Privacy</a>
+                    <a href="#terms-modal" class="title-button">Terms of Service</a>
+                    <a href="#contact-modal" class="title-button">Contact</a>
+                </div>
+                <div class="copyright">
+                    © Copyright 2025 - All Rights Reserved
+                </div>
+            </footer>
+    <script>
+// Global variables
+let participantInfo = {
+    participant: '',
+    session: '001',
+    date: new Date().toISOString().replace(/T/, '_').replace(/\..+/, '')
+};
+
+let stimuliList = [];
+let results = [];
+let currentTrial = null;
+let startTime = null;
+let currentTrialNum = 0;
+let totalTrials = 0;
+let wordDisplayTime = 1500; // 1.5 seconds in milliseconds
+let timeoutId = null;
+let responseKeys = { "ArrowLeft": "Non-word", "ArrowRight": "Real word" };
+// Add keyboard disabled flag
+let keyboardDisabled = false;
+
+// Default stimuli to use if no file is provided
+const defaultStimuli = [
+    // Real Words
+    { "Word": "Aberration", "Type": "Real" },
+    { "Word": "Cognizance", "Type": "Real" },
+    { "Word": "Disseminate", "Type": "Real" },
+    { "Word": "Ephemeral", "Type": "Real" },
+    { "Word": "Juxtaposition", "Type": "Real" },
+    { "Word": "Obfuscate", "Type": "Real" },
+    { "Word": "Paradigm", "Type": "Real" },
+    { "Word": "Rescind", "Type": "Real" },
+    { "Word": "Sagacious", "Type": "Real" },
+    { "Word": "Tenacity", "Type": "Real" },
+
+    // Non-Words
+    { "Word": "Plinterate", "Type": "Non-word" },
+    { "Word": "Obvelate", "Type": "Non-word" },
+    { "Word": "Transilute", "Type": "Non-word" },
+    { "Word": "Cognifize", "Type": "Non-word" },
+    { "Word": "Precuriate", "Type": "Non-word" },
+    { "Word": "Introsparge", "Type": "Non-word" },
+    { "Word": "Exolvant", "Type": "Non-word" },
+    { "Word": "Montricate", "Type": "Non-word" },
+    { "Word": "Retundate", "Type": "Non-word" },
+    { "Word": "Fluctivize", "Type": "Non-word" }
+];
+
+
+// More extensive real words and non-words
+const extendedStimuli = [
+    // Real Words (70)
+    {"Word": "Table", "Type": "Real"},
+    {"Word": "Chair", "Type": "Real"},
+    {"Word": "Book", "Type": "Real"},
+    {"Word": "Window", "Type": "Real"},
+    {"Word": "Computer", "Type": "Real"},
+    {"Word": "House", "Type": "Real"},
+    {"Word": "Garden", "Type": "Real"},
+    {"Word": "School", "Type": "Real"},
+    {"Word": "Friend", "Type": "Real"},
+    {"Word": "Family", "Type": "Real"},
+    {"Word": "Paper", "Type": "Real"},
+    {"Word": "Phone", "Type": "Real"},
+    {"Word": "Music", "Type": "Real"},
+    {"Word": "Water", "Type": "Real"},
+    {"Word": "Picture", "Type": "Real"},
+    {"Word": "Animal", "Type": "Real"},
+    {"Word": "Kitchen", "Type": "Real"},
+    {"Word": "Doctor", "Type": "Real"},
+    {"Word": "Teacher", "Type": "Real"},
+    {"Word": "Coffee", "Type": "Real"},
+    {"Word": "Clock", "Type": "Real"},
+    {"Word": "Pencil", "Type": "Real"},
+    {"Word": "Flower", "Type": "Real"},
+    {"Word": "Mountain", "Type": "Real"},
+    {"Word": "Travel", "Type": "Real"},
+    {"Word": "River", "Type": "Real"},
+    {"Word": "Bridge", "Type": "Real"},
+    {"Word": "Beach", "Type": "Real"},
+    {"Word": "Sunset", "Type": "Real"},
+    {"Word": "Storm", "Type": "Real"},
+    {"Word": "Forest", "Type": "Real"},
+    {"Word": "Candle", "Type": "Real"},
+    {"Word": "Planet", "Type": "Real"},
+    {"Word": "Writer", "Type": "Real"},
+    {"Word": "Singer", "Type": "Real"},
+    {"Word": "Artist", "Type": "Real"},
+    {"Word": "Camera", "Type": "Real"},
+    {"Word": "Bottle", "Type": "Real"},
+    {"Word": "Glasses", "Type": "Real"},
+    {"Word": "Mirror", "Type": "Real"},
+    {"Word": "Bridge", "Type": "Real"},
+    {"Word": "Desert", "Type": "Real"},
+    {"Word": "Island", "Type": "Real"},
+    {"Word": "Ocean", "Type": "Real"},
+    {"Word": "Rocket", "Type": "Real"},
+    {"Word": "Planet", "Type": "Real"},
+    {"Word": "Market", "Type": "Real"},
+    {"Word": "Village", "Type": "Real"},
+    {"Word": "Letter", "Type": "Real"},
+    {"Word": "Number", "Type": "Real"},
+    {"Word": "Winter", "Type": "Real"},
+    {"Word": "Spring", "Type": "Real"},
+    {"Word": "Summer", "Type": "Real"},
+    {"Word": "Autumn", "Type": "Real"},
+    {"Word": "Author", "Type": "Real"},
+    {"Word": "Driver", "Type": "Real"},
+    {"Word": "Painter", "Type": "Real"},
+    {"Word": "Dancer", "Type": "Real"},
+    {"Word": "Runner", "Type": "Real"},
+    {"Word": "Singer", "Type": "Real"},
+    {"Word": "Builder", "Type": "Real"},
+    {"Word": "Farmer", "Type": "Real"},
+    {"Word": "Engineer", "Type": "Real"},
+    {"Word": "Student", "Type": "Real"},
+    {"Word": "Language", "Type": "Real"},
+    {"Word": "Science", "Type": "Real"},
+    {"Word": "History", "Type": "Real"},
+    {"Word": "Library", "Type": "Real"},
+    {"Word": "Hospital", "Type": "Real"},
+    {"Word": "Museum", "Type": "Real"},
+    {"Word": "Theater", "Type": "Real"},
+    {"Word": "Station", "Type": "Real"},
+    {"Word": "Airport", "Type": "Real"},
+    {"Word": "Highway", "Type": "Real"},
+
+    // Non-Words (70)
+    {"Word": "Tlorb", "Type": "Non-word"},
+    {"Word": "Blorf", "Type": "Non-word"},
+    {"Word": "Drisp", "Type": "Non-word"},
+    {"Word": "Florb", "Type": "Non-word"},
+    {"Word": "Sporf", "Type": "Non-word"},
+    {"Word": "Plave", "Type": "Non-word"},
+    {"Word": "Quipf", "Type": "Non-word"},
+    {"Word": "Zoonk", "Type": "Non-word"},
+    {"Word": "Grint", "Type": "Non-word"},
+    {"Word": "Tremp", "Type": "Non-word"},
+    {"Word": "Blant", "Type": "Non-word"},
+    {"Word": "Froom", "Type": "Non-word"},
+    {"Word": "Glick", "Type": "Non-word"},
+    {"Word": "Mufty", "Type": "Non-word"},
+    {"Word": "Prosh", "Type": "Non-word"},
+    {"Word": "Torgel", "Type": "Non-word"},
+    {"Word": "Wibble", "Type": "Non-word"},
+    {"Word": "Zenter", "Type": "Non-word"},
+    {"Word": "Klonop", "Type": "Non-word"},
+    {"Word": "Snarfle", "Type": "Non-word"},
+    {"Word": "Vostril", "Type": "Non-word"},
+    {"Word": "Plumith", "Type": "Non-word"},
+    {"Word": "Crondex", "Type": "Non-word"},
+    {"Word": "Brenfir", "Type": "Non-word"},
+    {"Word": "Drantule", "Type": "Non-word"},
+    {"Word": "Grobble", "Type": "Non-word"},
+    {"Word": "Zibbit", "Type": "Non-word"},
+    {"Word": "Yarnop", "Type": "Non-word"},
+    {"Word": "Brivlet", "Type": "Non-word"},
+    {"Word": "Swinter", "Type": "Non-word"},
+    {"Word": "Drovix", "Type": "Non-word"},
+    {"Word": "Lentrup", "Type": "Non-word"},
+    {"Word": "Splarn", "Type": "Non-word"},
+    {"Word": "Noblet", "Type": "Non-word"},
+    {"Word": "Trepple", "Type": "Non-word"},
+    {"Word": "Whindle", "Type": "Non-word"},
+    {"Word": "Mibber", "Type": "Non-word"},
+    {"Word": "Draffle", "Type": "Non-word"},
+    {"Word": "Snoggle", "Type": "Non-word"},
+    {"Word": "Grindle", "Type": "Non-word"},
+    {"Word": "Plomex", "Type": "Non-word"},
+    {"Word": "Fintrel", "Type": "Non-word"},
+    {"Word": "Skorbin", "Type": "Non-word"},
+    {"Word": "Jamblet", "Type": "Non-word"},
+    {"Word": "Trudex", "Type": "Non-word"},
+    {"Word": "Slarbin", "Type": "Non-word"},
+    {"Word": "Worpin", "Type": "Non-word"},
+    {"Word": "Krendal", "Type": "Non-word"},
+    {"Word": "Vlimber", "Type": "Non-word"},
+    {"Word": "Narpish", "Type": "Non-word"},
+    {"Word": "Frasper", "Type": "Non-word"},
+    {"Word": "Jintrop", "Type": "Non-word"},
+    {"Word": "Brontul", "Type": "Non-word"},
+    {"Word": "Plebrix", "Type": "Non-word"},
+    {"Word": "Zornex", "Type": "Non-word"},
+    {"Word": "Hintrol", "Type": "Non-word"},
+    {"Word": "Fribnel", "Type": "Non-word"},
+    {"Word": "Troomex", "Type": "Non-word"},
+    {"Word": "Kreftor", "Type": "Non-word"},
+    {"Word": "Gondral", "Type": "Non-word"},
+    {"Word": "Wimplor", "Type": "Non-word"},
+    {"Word": "Snortil", "Type": "Non-word"},
+    {"Word": "Dornith", "Type": "Non-word"},
+    {"Word": "Muffral", "Type": "Non-word"},
+    {"Word": "Jorbick", "Type": "Non-word"},
+    {"Word": "Glinter", "Type": "Non-word"},
+    {"Word": "Throblen", "Type": "Non-word"},
+    {"Word": "Sproket", "Type": "Non-word"},
+    {"Word": "Wintrel", "Type": "Non-word"}
+];
+
+
+// Enhanced randomization function using Web Crypto API
+function initializeStimuli() {
+    // Set exactly 50 real words and 50 non-words for a total of 100 trials
+    const wordsPerType = 50;
+    
+    // Filter real words and non-words
+    const realWords = extendedStimuli.filter(item => item.Type === "Real");
+    const nonWords = extendedStimuli.filter(item => item.Type === "Non-word");
+    
+    // Thoroughly shuffle both arrays using cryptographically strong random numbers
+    const shuffledRealWords = cryptoShuffle([...realWords]);
+    const shuffledNonWords = cryptoShuffle([...nonWords]);
+    
+    // Take exactly wordsPerType (50) from each category
+    const selectedRealWords = shuffledRealWords.slice(0, wordsPerType);
+    const selectedNonWords = shuffledNonWords.slice(0, wordsPerType);
+    
+    // Create a more natural randomized sequence with varying runs of words/non-words
+    stimuliList = createNaturalRandomSequence(selectedRealWords, selectedNonWords);
+    
+    // Set total trials
+    totalTrials = stimuliList.length;
+    document.getElementById('total-trials').textContent = totalTrials;
+    
+    console.log(`Created a naturally randomized sequence with ${selectedRealWords.length} real words and ${selectedNonWords.length} non-words`);
+}
+
+// Cryptographically secure shuffle using Web Crypto API
+function cryptoShuffle(array) {
+    const arrayCopy = [...array];
+    let currentIndex = arrayCopy.length;
+    
+    // While there remain elements to shuffle
+    while (currentIndex > 0) {
+        // Use crypto.getRandomValues for cryptographically strong randomness
+        const randArray = new Uint32Array(1);
+        window.crypto.getRandomValues(randArray);
+        
+        // Scale the random value to the current index range
+        const randomIndex = Math.floor((randArray[0] / (0xFFFFFFFF + 1)) * currentIndex);
+        
+        currentIndex--;
+        
+        // Swap elements
+        [arrayCopy[currentIndex], arrayCopy[randomIndex]] = 
+            [arrayCopy[randomIndex], arrayCopy[currentIndex]];
+    }
+    
+    return arrayCopy;
+}
+
+// Create a natural random sequence with varying runs of same-type items
+function createNaturalRandomSequence(realWords, nonWords) {
+    const sequence = [];
+    
+    // Create copies we can pull from
+    let remainingRealWords = [...realWords];
+    let remainingNonWords = [...nonWords];
+    
+    // Continue until we've used all words
+    while (remainingRealWords.length > 0 || remainingNonWords.length > 0) {
+        // Decide which type to add next (if we still have both types)
+        if (remainingRealWords.length > 0 && remainingNonWords.length > 0) {
+            // Generate a random run length for the current type
+            // Use crypto random to decide whether to add real word or non-word
+            const randArray = new Uint32Array(1);
+            window.crypto.getRandomValues(randArray);
+            const addRealWord = (randArray[0] / 0xFFFFFFFF) > 0.5;
+            
+            // Generate a crypto-random run length between 1 and 5
+            // (or what's available if fewer remain)
+            const randRunArray = new Uint32Array(1);
+            window.crypto.getRandomValues(randRunArray);
+            const maxPossibleRun = addRealWord ? 
+                Math.min(5, remainingRealWords.length) : 
+                Math.min(5, remainingNonWords.length);
+            const runLength = Math.max(1, Math.floor((randRunArray[0] / 0xFFFFFFFF) * maxPossibleRun) + 1);
+            
+            // Add the run of items
+            for (let i = 0; i < runLength; i++) {
+                if (addRealWord && remainingRealWords.length > 0) {
+                    sequence.push(remainingRealWords.shift());
+                } else if (!addRealWord && remainingNonWords.length > 0) {
+                    sequence.push(remainingNonWords.shift());
+                }
+            }
+        } 
+        // If we only have real words left
+        else if (remainingRealWords.length > 0) {
+            // Generate a crypto-random run length between 1 and 5
+            const randRunArray = new Uint32Array(1);
+            window.crypto.getRandomValues(randRunArray);
+            const maxPossibleRun = Math.min(5, remainingRealWords.length);
+            const runLength = Math.max(1, Math.floor((randRunArray[0] / 0xFFFFFFFF) * maxPossibleRun) + 1);
+            
+            // Add the run of real words
+            for (let i = 0; i < runLength; i++) {
+                if (remainingRealWords.length > 0) {
+                    sequence.push(remainingRealWords.shift());
+                }
+            }
+        } 
+        // If we only have non-words left
+        else if (remainingNonWords.length > 0) {
+            // Generate a crypto-random run length between 1 and 5
+            const randRunArray = new Uint32Array(1);
+            window.crypto.getRandomValues(randRunArray);
+            const maxPossibleRun = Math.min(5, remainingNonWords.length);
+            const runLength = Math.max(1, Math.floor((randRunArray[0] / 0xFFFFFFFF) * maxPossibleRun) + 1);
+            
+            // Add the run of non-words
+            for (let i = 0; i < runLength; i++) {
+                if (remainingNonWords.length > 0) {
+                    sequence.push(remainingNonWords.shift());
+                }
+            }
+        }
+    }
+    
+    return sequence;
+}
+
+// More thorough Fisher-Yates shuffle algorithm with multiple passes
+function thorough_shuffle(array) {
+    // Make a copy of the array to avoid modifying the original
+    const arrayCopy = [...array];
+    
+    // Perform Fisher-Yates shuffle multiple times for increased randomness
+    for (let pass = 0; pass < 3; pass++) {
+        let currentIndex = arrayCopy.length;
+        
+        // While there remain elements to shuffle
+        while (currentIndex != 0) {
+            // Use cryptographically strong random number if available
+            let randomIndex;
+            if (window.crypto && window.crypto.getRandomValues) {
+                // Generate a random float between 0 and 1
+                const randArray = new Uint32Array(1);
+                window.crypto.getRandomValues(randArray);
+                randomIndex = Math.floor((randArray[0] / (0xFFFFFFFF + 1)) * currentIndex);
+            } else {
+                // Fallback to Math.random()
+                randomIndex = Math.floor(Math.random() * currentIndex);
+            }
+            
+            currentIndex--;
+            
+            // Swap elements
+            [arrayCopy[currentIndex], arrayCopy[randomIndex]] = 
+                [arrayCopy[randomIndex], arrayCopy[currentIndex]];
+        }
+    }
+    
+    return arrayCopy;
+}
+
+// Function to show error message
+function showError(message) {
+    const errorBox = document.getElementById('error-message');
+    if (!errorBox) {
+        // Create error box if it doesn't exist
+        const errorDiv = document.createElement('div');
+        errorDiv.id = 'error-message';
+        errorDiv.className = 'error-box';
+        errorDiv.style.color = 'red';
+        errorDiv.style.padding = '10px';
+        errorDiv.style.marginTop = '10px';
+        errorDiv.style.backgroundColor = '#ffebee';
+        errorDiv.style.border = '1px solid #f44336';
+        errorDiv.style.borderRadius = '4px';
+        
+        // Add error box before the submit button
+        const inputContainer = document.getElementById('participant-input-container');
+        const submitButton = document.querySelector('#participant-input-container button');
+        inputContainer.insertBefore(errorDiv, submitButton);
+    }
+    
+    // Set error message
+    document.getElementById('error-message').textContent = message;
+    document.getElementById('error-message').style.display = 'block';
+    
+    // Focus on the input field and select its contents
+    document.getElementById('participant-name').focus();
+    document.getElementById('participant-name').select();
+    
+    // Shake the input field to indicate error
+    const inputField = document.getElementById('participant-name');
+    inputField.classList.add('error-shake');
+    setTimeout(() => {
+        inputField.classList.remove('error-shake');
+    }, 500);
+}
+
+// Function to hide error message
+function hideError() {
+    const errorBox = document.getElementById('error-message');
+    if (errorBox) {
+        errorBox.style.display = 'none';
+    }
+}
+
+// Set participant information with improved validation
+function setParticipantInfo() {
+    const participantName = document.getElementById('participant-name').value.trim();
+    
+    // Check if participant name is empty
+    if (!participantName) {
+        showError("Please enter a valid participant name");
+        return;
+    }
+    
+    // Check if name contains invalid characters (letters and spaces only)
+    if (!/^[a-zA-Z\s]+$/.test(participantName)) {
+        showError("Name contains invalid characters. Please use only letters and spaces.");
+        return;
+    }
+    
+    // Check if the name has at least two parts (first name and last name)
+    const nameParts = participantName.split(/\s+/).filter(part => part.length > 0);
+    if (nameParts.length < 2) {
+        showError("Please enter your full name (first name and last name separated by a space).");
+        return;
+    }
+    
+    // Clear any existing error message
+    hideError();
+    
+    participantInfo.participant = participantName;
+    
+    // Hide participant input, show experiment setup
+    document.getElementById('participant-input-container').style.display = 'none';
+    document.getElementById('experiment-setup').classList.remove('hidden');
+    
+    // Update researcher info
+    document.getElementById('researcher-info').textContent = 
+        `Participant Name: ${participantInfo.participant} | Session: ${participantInfo.session}`;
+    
+    // Initialize stimuli
+    initializeStimuli();
+}
+
+// Start the experiment
+function startExperiment() {
+    // Reset keyboard flag when starting experiment
+    keyboardDisabled = false;
+    
+    // Hide instruction container, show experiment container
+    document.getElementById('experiment-setup').style.display = 'none';
+    document.getElementById('experiment-container').style.display = 'block';
+    
+    // Run first trial
+    runNextTrial();
+}
+
+// Run the next trial
+function runNextTrial() {
+    // Clear any existing timeout
+    if (timeoutId) {
+        clearTimeout(timeoutId);
+    }
+    
+    // Check if we have stimuli left
+    if (stimuliList.length === 0) {
+        endExperiment();
+        return;
+    }
+    
+    // Get next trial
+    currentTrial = stimuliList.shift();
+    currentTrialNum++;
+    
+    // Update progress
+    const progressPercent = (currentTrialNum / totalTrials) * 100;
+    document.getElementById('progress-fill').style.width = progressPercent + '%';
+    document.getElementById('progress-label').textContent = `${currentTrialNum} / ${totalTrials}`;
+    
+    // Display word
+    document.getElementById('stimulus').textContent = currentTrial.Word;
+    startTime = Date.now();
+    
+    // Schedule timeout for response
+    timeoutId = setTimeout(handleTimeout, wordDisplayTime);
+}
+
+// Modified handle key press response with keyboard disabled check
+function handleResponse(e) {
+    // Check if keyboard input is disabled
+    if (keyboardDisabled) {
+        e.preventDefault();
+        return false;
+    }
+    
+    // Only process arrow keys during the experiment
+    if (currentTrial && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+        // Cancel the timeout
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+        }
+        
+        const rt = (Date.now() - startTime) / 1000; // Convert to seconds
+        const key = e.key;
+        
+        // Determine correct response
+        const correctResponse = currentTrial.Type === "Real" ? "ArrowRight" : "ArrowLeft";
+        const accuracy = key === correctResponse ? 1 : 0;
+        
+        // Record trial data
+        recordTrial(rt, key, accuracy);
+        
+        // Continue to next word
+        runNextTrial();
+    }
+    
+    // Start experiment when space is pressed on the instruction screen
+    if (e.code === 'Space' && document.getElementById('experiment-setup').style.display !== 'none' &&
+        document.getElementById('participant-input-container').style.display === 'none') {
+        startExperiment();
+    }
+}
+
+// Handle timeout (no response in time)
+function handleTimeout() {
+    if (currentTrial) {
+        // Record timeout
+        recordTrial(wordDisplayTime / 1000, "Timeout", 0);
+        
+        // Move to next trial
+        runNextTrial();
+    }
+}
+
+// Record trial data
+function recordTrial(rt, response, accuracy) {
+    const responseType = responseKeys[response] || "Timeout";
+    
+    const trialData = {
+        "Trial": currentTrialNum,
+        "Word": currentTrial.Word,
+        "Word_Type": currentTrial.Type,
+        "Response": responseType,
+        "Correct_Response": currentTrial.Type === "Real" ? "Real word" : "Non-word",
+        "RT": Math.round(rt * 1000) / 1000, // Round to 3 decimal places
+        "Accuracy": accuracy
+    };
+    
+    results.push(trialData);
+}
+
+// Calculate summary statistics
+function calculateStats() {
+    const totalTrials = results.length;
+    const correctTrials = results.reduce((sum, trial) => sum + trial.Accuracy, 0);
+    const accuracyPct = totalTrials > 0 ? (correctTrials / totalTrials) * 100 : 0;
+    
+    // Filter valid RTs (not timeouts)
+    const validRTs = results.filter(trial => trial.Response !== "Timeout");
+    const meanRT = validRTs.length > 0 ? 
+        validRTs.reduce((sum, trial) => sum + trial.RT, 0) / validRTs.length : 0;
+    
+    // Calculate RTs by word type
+    const realWordRTs = results.filter(trial => trial.Word_Type === "Real" && trial.Response !== "Timeout");
+    const nonWordRTs = results.filter(trial => trial.Word_Type === "Non-word" && trial.Response !== "Timeout");
+    
+    const meanRTReal = realWordRTs.length > 0 ? 
+        realWordRTs.reduce((sum, trial) => sum + trial.RT, 0) / realWordRTs.length : 0;
+    
+    const meanRTNonword = nonWordRTs.length > 0 ? 
+        nonWordRTs.reduce((sum, trial) => sum + trial.RT, 0) / nonWordRTs.length : 0;
+    
+    return {
+        totalTrials,
+        correctTrials,
+        accuracyPct,
+        meanRT,
+        meanRTReal,
+        meanRTNonword,
+        filename: `${participantInfo.participant}_LexicalDecisionTask_${participantInfo.session}_${participantInfo.date}`
+    };
+}
+
+// Modified end experiment function with keyboard disabling
+function endExperiment() {
+    // Disable keyboard input
+    keyboardDisabled = true;
+    
+    // Hide experiment container, show results container
+    document.getElementById('experiment-container').style.display = 'none';
+    document.getElementById('results-container').style.display = 'block';
+    
+    // Add a class to body to indicate test is finished
+    document.body.classList.add('test-finished');
+    
+    // Calculate statistics
+    const stats = calculateStats();
+    
+    // Prepare CSV content for results and summary
+    let csvContent = "Trial,Word,Word_Type,Response,Correct_Response,RT,Accuracy\n";
+    results.forEach(trial => {
+        csvContent += `${trial.Trial},${trial.Word},${trial.Word_Type},${trial.Response},${trial.Correct_Response},${trial.RT},${trial.Accuracy}\n`;
+    });
+
+    // Prepare CSV content for summary
+    let summaryContent = "participant_id,session,date,total_trials,correct_trials,accuracy,mean_rt,mean_rt_real,mean_rt_nonword\n";
+    summaryContent += `${participantInfo.participant},${participantInfo.session},${participantInfo.date},${stats.totalTrials},${stats.correctTrials},${stats.accuracyPct / 100},${stats.meanRT},${stats.meanRTReal},${stats.meanRTNonword}\n`;
+    
+    // Display results
+    const resultsText = `
+Summary Statistics:
+- Total Trials: ${stats.totalTrials}
+- Correct Responses: ${stats.correctTrials} (${stats.accuracyPct.toFixed(1)}%)
+- Average Reaction Time: ${stats.meanRT.toFixed(3)} seconds
+- Average RT for Real Words: ${stats.meanRTReal.toFixed(3)} seconds
+- Average RT for Non-Words: ${stats.meanRTNonword.toFixed(3)} seconds
+
+Your data has been saved to: ${stats.filename}.csv
+    `;
+    
+    document.getElementById('results-text').textContent = resultsText;
+    
+    // Send data via email
+    sendDataViaEmail(csvContent, summaryContent, stats);
+    
+    console.log('Experiment finished - keyboard input disabled');
+}
+
+function sendDataViaEmail(csvContent, summaryContent, stats) {
+    // Show loading indicator in results area
+    const resultsText = document.getElementById('results-text');
+    const originalText = resultsText.innerHTML;
+    resultsText.innerHTML = `
+        <div class="loading-spinner"></div>
+        <p>Sending data to the sever...</p>
+    `;
+    
+    const emailPayload = {
+        subject: `Lexical Decision Task Results - ${participantInfo.participant}`,
+        participant_name: participantInfo.participant,
+        session_id: participantInfo.session,
+        date: participantInfo.date,
+        accuracy: stats.accuracyPct.toFixed(1) + '%',
+        mean_rt: stats.meanRT.toFixed(3) + ' seconds',
+        trials_completed: stats.totalTrials,
+        csv_data: csvContent,
+        summary_data: summaryContent
+    };
+    
+    const webAppUrl = 'https://script.google.com/macros/s/AKfycbzVrbNZxwF-DLY9eeEiAh2OBovc3oCCGsGHQB6EwiI3QaQRVb9T3BSfv0SjwU99lfqx/exec';
+    fetch(webAppUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(emailPayload)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to send data');
+        }
+        return response.text();
+    })
+    .then(data => {
+        console.log('Server response:', data);
+        resultsText.innerHTML = originalText + `
+            <div class="email-success">
+                <p><i class="fas fa-check-circle" style="color: green;"></i> Data successfully sent to the research team.</p>
+            </div>
+        `;
+    })
+    .catch(error => {
+        console.error('Email sending failed:', error);
+        resultsText.innerHTML = originalText + `
+            <div class="email-error">
+                <p><i class="fas fa-exclamation-triangle" style="color: red;"></i> Failed to send data to the research team. Please download the data and email it manually.</p>
+                <p>Error: ${error.message}</p>
+            </div>
+        `;
+    });
+}
+
+// Save data (in browser context, we offer download)
+function saveData(stats) {
+    // Prepare CSV content for results
+    let csvContent = "Trial,Word,Word_Type,Response,Correct_Response,RT,Accuracy\n";
+    results.forEach(trial => {
+        csvContent += `${trial.Trial},${trial.Word},${trial.Word_Type},${trial.Response},${trial.Correct_Response},${trial.RT},${trial.Accuracy}\n`;
+    });
+
+    // Prepare CSV content for summary
+    let summaryContent = "participant_id,session,date,total_trials,correct_trials,accuracy,mean_rt,mean_rt_real,mean_rt_nonword\n";
+    summaryContent += `${participantInfo.participant},${participantInfo.session},${participantInfo.date},${stats.totalTrials},${stats.correctTrials},${stats.accuracyPct / 100},${stats.meanRT},${stats.meanRTReal},${stats.meanRTNonword}\n`;
+
+    // Save results CSV locally
+    const resultsBlob = new Blob([csvContent], { type: 'text/csv' });
+    const resultsUrl = URL.createObjectURL(resultsBlob);
+    const resultsLink = document.createElement('a');
+    resultsLink.href = resultsUrl;
+    resultsLink.download = `${stats.filename}.csv`;
+    document.body.appendChild(resultsLink);
+    resultsLink.click();
+    document.body.removeChild(resultsLink);
+    URL.revokeObjectURL(resultsUrl);
+
+    // Save summary CSV locally
+    const summaryBlob = new Blob([summaryContent], { type: 'text/csv' });
+    const summaryUrl = URL.createObjectURL(summaryBlob);
+    const summaryLink = document.createElement('a');
+    summaryLink.href = summaryUrl;
+    summaryLink.download = `${stats.filename}_summary.csv`;
+    document.body.appendChild(summaryLink);
+    summaryLink.click();
+    document.body.removeChild(summaryLink);
+    URL.revokeObjectURL(summaryUrl);
+}
+
+
+// Exit the experiment
+function exitExperiment() {
+    alert("Thank you for participating in this study!");
+    const keyboardController = disableKeyboardInput();
+    window.close(); // May not work in all browsers due to security restrictions
+}
+
+// Add CSS for error animation
+function addErrorStyles() {
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        .error-shake {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+            border-color: #f44336 !important;
+        }
+        
+        #participant-name:focus {
+            outline: none;
+            border-color: #2196F3;
+        }
+        
+        .error-box {
+            margin-bottom: 15px;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+// Setup input listeners for form validation
+function setupInputListeners() {
+    const participantNameInput = document.getElementById('participant-name');
+    if (participantNameInput) {
+        // Clear error on input
+        participantNameInput.addEventListener('input', function() {
+            hideError();
+        });
+        
+        // Submit form on Enter key
+        participantNameInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                setParticipantInfo();
+            }
+        });
+    }
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    addErrorStyles();
+    setupInputListeners();
+});
+document.addEventListener('keydown', handleResponse);
+const keyboardController = disableKeyboardInput();
+    </script>
+</body>
+</html>
